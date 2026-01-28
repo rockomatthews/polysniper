@@ -27,7 +27,7 @@ export async function GET() {
   if (!data) {
     const { data: inserted, error: insertError } = await supabase
       .from("bot_controls")
-      .insert({ armed: false, live_trading: false })
+      .insert({ armed: false, live_trading: false, connected: true })
       .select("*")
       .single();
     if (insertError) {
@@ -44,6 +44,7 @@ export async function POST(request: Request) {
   const body = (await request.json()) as {
     armed?: boolean;
     live_trading?: boolean;
+    connected?: boolean;
   };
 
   const { data: existing } = await supabase
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
   const payload = {
     armed: body.armed ?? false,
     live_trading: body.live_trading ?? false,
+    connected: body.connected ?? true,
     updated_at: new Date().toISOString()
   };
 

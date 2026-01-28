@@ -18,7 +18,9 @@ export class PositionsService {
     private user: string,
     private telemetry?: Telemetry,
     private pollMs = 15000,
-    private limit = 200
+    private limit = 200,
+    private minBalanceUsdc = 25,
+    private getControlState?: () => { armed: boolean; liveTrading: boolean; connected: boolean }
   ) {}
 
   start() {
@@ -81,5 +83,16 @@ export class PositionsService {
         top
       }
     });
+
+    const control = this.getControlState?.();
+    if (control && control.liveTrading && totals.currentValue < this.minBalanceUsdc) {
+      this.telemetry?.logEvent({
+        event_type: "funds_insufficient",
+        payload: {
+          required: this.minBalanceUsdc,
+          currentValue: totals.currentValue
+        }
+      });
+    }
   }
 }

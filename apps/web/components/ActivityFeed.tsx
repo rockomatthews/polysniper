@@ -20,7 +20,7 @@ const describeEvent = (event: BotEvent) => {
     case "heartbeat":
       return `Heartbeat: armed=${payload.armed} live=${payload.live_trading} shadow=${payload.shadow_mode}`;
     case "control_state":
-      return `Control update: armed=${payload.armed} live=${payload.liveTrading}`;
+      return `Control update: armed=${payload.armed} live=${payload.liveTrading} connected=${payload.connected}`;
     case "control_block":
       return `Blocked by control: ${payload.reason ?? "unknown"}`;
     case "opportunity":
@@ -46,6 +46,8 @@ const describeEvent = (event: BotEvent) => {
       return `Paper trade: size=${payload.size ?? "-"} side=${payload.side ?? "-"}`;
     case "positions_snapshot":
       return `Balance: positions=${payload.count ?? "-"} value=$${Number(payload.currentValue ?? 0).toFixed(2)} pnl=$${Number(payload.cashPnl ?? 0).toFixed(2)}`;
+    case "funds_insufficient":
+      return `Not enough funds to trade: required=$${Number(payload.required ?? 0).toFixed(2)} current=$${Number(payload.currentValue ?? 0).toFixed(2)}`;
     case "order_attempt":
       return `Order attempt: ${payload.side ?? "-"} ${payload.size ?? "-"} @ ${payload.price ?? "-"}`;
     case "order_error":

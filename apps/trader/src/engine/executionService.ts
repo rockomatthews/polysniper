@@ -48,6 +48,13 @@ export class ExecutionService {
       return;
     }
     const control = this.controlService?.getState();
+    if (control && !control.connected) {
+      this.telemetry?.logEvent({
+        event_type: "control_block",
+        payload: { reason: "disconnected", control }
+      });
+      return;
+    }
     if (control && !control.armed) {
       this.telemetry?.logEvent({
         event_type: "control_block",
@@ -118,6 +125,13 @@ export class ExecutionService {
       return;
     }
     const control = this.controlService?.getState();
+    if (control && !control.connected) {
+      this.telemetry?.logEvent({
+        event_type: "control_block",
+        payload: { reason: "disconnected", control }
+      });
+      return;
+    }
     if (control && !control.armed) {
       this.telemetry?.logEvent({
         event_type: "control_block",

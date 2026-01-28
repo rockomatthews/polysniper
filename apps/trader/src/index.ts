@@ -117,7 +117,9 @@ const main = async () => {
     config.dataApiUser,
     telemetry,
     config.positionsPollMs,
-    config.positionsLimit
+    config.positionsLimit,
+    config.minBalanceUsdc,
+    () => controlService.getState()
   );
   positionsService.start();
 
@@ -219,6 +221,7 @@ const main = async () => {
       payload: {
         armed: control.armed,
         live_trading: control.liveTrading,
+        connected: control.connected,
         shadow_mode: config.shadowMode,
         paper_trading: config.paperTrading,
         markets: marketIds.length,

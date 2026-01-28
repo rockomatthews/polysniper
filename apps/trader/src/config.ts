@@ -67,5 +67,6 @@ export const config = {
   supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY ?? "",
   dataApiUser: process.env.DATA_API_USER ?? "",
   positionsPollMs: asNumber(process.env.POSITIONS_POLL_MS ?? "", 15000),
-  positionsLimit: asNumber(process.env.POSITIONS_LIMIT ?? "", 200)
+  positionsLimit: asNumber(process.env.POSITIONS_LIMIT ?? "", 200),
+  minBalanceUsdc: asNumber(process.env.MIN_BALANCE_USDC ?? "", 25)
 };

@@ -5,12 +5,13 @@ import { logger } from "../utils/logger";
 export type ControlState = {
   armed: boolean;
   liveTrading: boolean;
+  connected: boolean;
   updatedAt?: string;
 };
 
 export class ControlService {
   private client: SupabaseClient | null = null;
-  private state: ControlState = { armed: false, liveTrading: false };
+  private state: ControlState = { armed: false, liveTrading: false, connected: true };
   private timer: NodeJS.Timeout | null = null;
 
   constructor(
@@ -81,6 +82,7 @@ export class ControlService {
     const nextState: ControlState = {
       armed: Boolean(record.armed),
       liveTrading: Boolean(record.live_trading),
+      connected: record.connected === undefined ? true : Boolean(record.connected),
       updatedAt: record.updated_at as string | undefined
     };
 

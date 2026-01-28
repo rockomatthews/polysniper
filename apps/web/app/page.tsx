@@ -20,6 +20,7 @@ import { supabaseClient } from "../lib/supabaseClient";
 export default function Home() {
   const [armed, setArmed] = useState(false);
   const [liveTrading, setLiveTrading] = useState(false);
+  const [connected, setConnected] = useState(true);
   const [controlError, setControlError] = useState("");
   const [balanceValue, setBalanceValue] = useState<string>("-");
   const [balancePnl, setBalancePnl] = useState<string>("-");
@@ -36,6 +37,7 @@ export default function Home() {
       console.info("Control load payload", data);
       setArmed(Boolean(data.armed));
       setLiveTrading(Boolean(data.live_trading));
+      setConnected(data.connected === undefined ? true : Boolean(data.connected));
       setControlError("");
     } catch (error) {
       console.error("Control load failed", error);
@@ -43,7 +45,11 @@ export default function Home() {
     }
   };
 
-  const updateControl = async (next: { armed?: boolean; live_trading?: boolean }) => {
+  const updateControl = async (next: {
+    armed?: boolean;
+    live_trading?: boolean;
+    connected?: boolean;
+  }) => {
     try {
       console.info("Control update requested", next);
       const response = await fetch("/api/control", {
@@ -51,7 +57,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           armed: next.armed ?? armed,
-          live_trading: next.live_trading ?? liveTrading
+          live_trading: next.live_trading ?? liveTrading,
+          connected: next.connected ?? connected
         })
       });
       console.info("Control update response", response.status);
@@ -62,6 +69,7 @@ export default function Home() {
       console.info("Control update payload", data);
       setArmed(Boolean(data.armed));
       setLiveTrading(Boolean(data.live_trading));
+      setConnected(data.connected === undefined ? true : Boolean(data.connected));
       setControlError("");
     } catch (error) {
       console.error("Control update failed", error);
@@ -113,8 +121,18 @@ export default function Home() {
   const stats = [
     {
       label: "Live Status",
-      value: armed ? (liveTrading ? "ARMED" : "ARMED (SHADOW)") : "DISARMED",
-      helper: liveTrading ? "Live trading enabled" : "Shadow or paper mode"
+      value: connected
+        ? armed
+          ? liveTrading
+            ? "ARMED"
+            : "ARMED (SHADOW)"
+          : "DISARMED"
+        : "DISCONNECTED",
+      helper: connected
+        ? liveTrading
+          ? "Live trading enabled"
+          : "Shadow or paper mode"
+        : "Trader disconnected"
     },
     { label: "Balance", value: balanceValue, helper: "Portfolio value (USDC)" },
     { label: "Cash PnL", value: balancePnl, helper: "Data API cash PnL" },
@@ -157,6 +175,15 @@ export default function Home() {
                   />
                   <Typography>Enable live trading</Typography>
                 </Stack>
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <Switch
+                    checked={connected}
+                    onChange={(event) =>
+                      updateControl({ connected: event.target.checked, armed: false })
+                    }
+                  />
+                  <Typography>Trader connected</Typography>
+                </Stack>
                 <Stack direction="row" spacing={2}>
                   <Button variant="contained" onClick={() => updateControl({ armed: true })}>
                     Arm Strategy
@@ -167,6 +194,12 @@ export default function Home() {
                     onClick={() => updateControl({ armed: false })}
                   >
                     Emergency Stop
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => updateControl({ connected: false, armed: false })}
+                  >
+                    Disconnect
                   </Button>
                 </Stack>
                 {controlError ? (

@@ -22,8 +22,11 @@ create table if not exists bot_controls (
   id uuid primary key default gen_random_uuid(),
   armed boolean default false,
   live_trading boolean default false,
+  connected boolean default true,
   updated_at timestamptz default now()
 );
+
+alter table bot_controls add column if not exists connected boolean default true;
 
 alter table bot_controls enable row level security;
 
