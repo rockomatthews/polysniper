@@ -66,7 +66,7 @@ export const ShadowMetrics = () => {
   if (error) {
     return (
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <StatCard label="Shadow Metrics Error" value="-" helper={error} />
         </Grid>
       </Grid>
@@ -75,19 +75,19 @@ export const ShadowMetrics = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={3}>
+      <Grid xs={12} md={3}>
         <StatCard label="Opportunities" value={`${metrics.opportunities}`} helper="Last 200 events" />
       </Grid>
-      <Grid item xs={12} md={3}>
+      <Grid xs={12} md={3}>
         <StatCard label="Shadow Trades" value={`${metrics.shadowTrades}`} helper="Hit rate proxy" />
       </Grid>
-      <Grid item xs={12} md={2}>
+      <Grid xs={12} md={2}>
         <StatCard label="Risk Blocks" value={`${metrics.riskBlocks}`} />
       </Grid>
-      <Grid item xs={12} md={2}>
+      <Grid xs={12} md={2}>
         <StatCard label="Exec Errors" value={`${metrics.executionErrors}`} />
       </Grid>
-      <Grid item xs={12} md={2}>
+      <Grid xs={12} md={2}>
         <StatCard label="Kill Switch" value={`${metrics.killSwitches}`} />
       </Grid>
     </Grid>

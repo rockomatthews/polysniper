@@ -34,7 +34,7 @@ export default function Home() {
 
         <Grid container spacing={3}>
           {mockStats.map((stat) => (
-            <Grid item xs={12} md={3} key={stat.label}>
+            <Grid xs={12} md={3} key={stat.label}>
               <StatCard {...stat} />
             </Grid>
           ))}
@@ -43,7 +43,7 @@ export default function Home() {
         <ShadowMetrics />
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={7}>
+          <Grid xs={12} md={7}>
             <Paper sx={{ p: 3 }}>
               <Stack spacing={2}>
                 <Typography variant="h6">Strategy Controls</Typography>
@@ -60,7 +60,7 @@ export default function Home() {
               </Stack>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid xs={12} md={5}>
             <Paper sx={{ p: 3 }}>
               <Stack spacing={2}>
                 <Typography variant="h6">Risk Limits</Typography>
