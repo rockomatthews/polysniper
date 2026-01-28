@@ -51,7 +51,7 @@ export class ExecutionService {
     if (control && !control.armed) {
       this.telemetry?.logEvent({
         event_type: "control_block",
-        payload: { reason: "not_armed" }
+        payload: { reason: "not_armed", control }
       });
       return;
     }
@@ -59,7 +59,7 @@ export class ExecutionService {
     if (control && !control.liveTrading && !this.config.paperTrading && !this.config.shadowMode) {
       this.telemetry?.logEvent({
         event_type: "control_block",
-        payload: { reason: "live_trading_disabled" }
+        payload: { reason: "live_trading_disabled", control }
       });
       return;
     }
@@ -121,7 +121,7 @@ export class ExecutionService {
     if (control && !control.armed) {
       this.telemetry?.logEvent({
         event_type: "control_block",
-        payload: { reason: "not_armed" }
+        payload: { reason: "not_armed", control }
       });
       return;
     }
@@ -129,7 +129,7 @@ export class ExecutionService {
     if (control && !control.liveTrading && !this.config.paperTrading && !this.config.shadowMode) {
       this.telemetry?.logEvent({
         event_type: "control_block",
-        payload: { reason: "live_trading_disabled" }
+        payload: { reason: "live_trading_disabled", control }
       });
       return;
     }

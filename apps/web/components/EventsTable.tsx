@@ -69,7 +69,14 @@ export const EventsTable = () => {
                 <TableRow key={event.id}>
                   <TableCell>{event.event_type}</TableCell>
                   <TableCell>{event.market_id ?? "-"}</TableCell>
-                  <TableCell sx={{ maxWidth: 320, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <TableCell
+                    sx={{
+                      maxWidth: 420,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis"
+                    }}
+                  >
                     {event.payload ? JSON.stringify(event.payload) : "-"}
                   </TableCell>
                   <TableCell>

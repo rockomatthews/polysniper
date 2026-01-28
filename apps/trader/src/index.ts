@@ -15,6 +15,7 @@ import { ExecutionService } from "./engine/executionService";
 import { PairDiscovery } from "./engine/pairDiscovery";
 import { AutoTuner } from "./engine/autoTuner";
 import { ControlService } from "./engine/controlService";
+import { PositionsService } from "./engine/positionsService";
 
 const parseHeaders = (json: string) => {
   if (!json) {
@@ -111,6 +112,15 @@ const main = async () => {
   controlService.init();
   await controlService.start();
 
+  const positionsService = new PositionsService(
+    config.dataApiBase,
+    config.dataApiUser,
+    telemetry,
+    config.positionsPollMs,
+    config.positionsLimit
+  );
+  positionsService.start();
+
   const clob = new ClobClient(config.clobApiBase, resolveAuthHeaders);
   const orderManager = new OrderManager(clob, telemetry);
   const riskEngine = new RiskEngine({
@@ -201,6 +211,22 @@ const main = async () => {
     groups: groups.length
   });
   telemetry.logEvent({ event_type: "trader_started", payload: { markets: marketIds } });
+
+  setInterval(() => {
+    const control = controlService.getState();
+    telemetry.logEvent({
+      event_type: "heartbeat",
+      payload: {
+        armed: control.armed,
+        live_trading: control.liveTrading,
+        shadow_mode: config.shadowMode,
+        paper_trading: config.paperTrading,
+        markets: marketIds.length,
+        pairs: pairs.length,
+        groups: groups.length
+      }
+    });
+  }, 10_000);
 };
 
 main().catch((error) => {

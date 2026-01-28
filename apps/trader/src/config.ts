@@ -22,6 +22,7 @@ export const config = {
   clobApiBase: required("CLOB_API_BASE", "https://clob.polymarket.com"),
   clobWsUrl: required("CLOB_WS_URL", "wss://ws-subscriptions-clob.polymarket.com"),
   gammaApiBase: required("GAMMA_API_BASE", "https://gamma-api.polymarket.com"),
+  dataApiBase: required("DATA_API_BASE", "https://data-api.polymarket.com"),
   clobApiKey: process.env.CLOB_API_KEY ?? "",
   clobApiSecret: process.env.CLOB_API_SECRET ?? "",
   clobApiPassphrase: process.env.CLOB_API_PASSPHRASE ?? "",
@@ -63,5 +64,8 @@ export const config = {
   dailyLossLimit: asNumber(process.env.DAILY_LOSS_LIMIT ?? "", 200),
   maxOrdersPerMinute: asNumber(process.env.MAX_ORDERS_PER_MIN ?? "", 20),
   supabaseUrl: process.env.SUPABASE_URL ?? "",
-  supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY ?? ""
+  supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY ?? "",
+  dataApiUser: process.env.DATA_API_USER ?? "",
+  positionsPollMs: asNumber(process.env.POSITIONS_POLL_MS ?? "", 15000),
+  positionsLimit: asNumber(process.env.POSITIONS_LIMIT ?? "", 200)
 };

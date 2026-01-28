@@ -14,11 +14,15 @@ import { useEffect, useState } from "react";
 import { StatCard } from "../components/StatCard";
 import { EventsTable } from "../components/EventsTable";
 import { ShadowMetrics } from "../components/ShadowMetrics";
+import { ActivityFeed } from "../components/ActivityFeed";
+import { supabaseClient } from "../lib/supabaseClient";
 
 export default function Home() {
   const [armed, setArmed] = useState(false);
   const [liveTrading, setLiveTrading] = useState(false);
   const [controlError, setControlError] = useState("");
+  const [balanceValue, setBalanceValue] = useState<string>("-");
+  const [balancePnl, setBalancePnl] = useState<string>("-");
 
   const loadControl = async () => {
     try {
@@ -63,15 +67,49 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const loadBalance = async () => {
+      try {
+        const supabase = supabaseClient();
+        const { data, error } = await supabase
+          .from("bot_events")
+          .select("payload, created_at")
+          .eq("event_type", "positions_snapshot")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (error) {
+          throw error;
+        }
+        const payload = (data?.payload ?? {}) as Record<string, unknown>;
+        const value = Number(payload.currentValue ?? NaN);
+        const pnl = Number(payload.cashPnl ?? NaN);
+        if (Number.isFinite(value)) {
+          setBalanceValue(`$${value.toFixed(2)}`);
+        }
+        if (Number.isFinite(pnl)) {
+          setBalancePnl(`$${pnl.toFixed(2)}`);
+        }
+      } catch (error) {
+        setBalanceValue("-");
+        setBalancePnl("-");
+      }
+    };
+
+    loadBalance();
+    const interval = setInterval(loadBalance, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   const stats = [
     {
       label: "Live Status",
       value: armed ? (liveTrading ? "ARMED" : "ARMED (SHADOW)") : "DISARMED",
       helper: liveTrading ? "Live trading enabled" : "Shadow or paper mode"
     },
-    { label: "Markets Watched", value: "18", helper: "Top liquidity markets" },
-    { label: "Open Orders", value: "6", helper: "Auto-cancel in 2s" },
-    { label: "PnL (24h)", value: "+$124.50", helper: "Unrealized +$58.20" }
+    { label: "Balance", value: balanceValue, helper: "Portfolio value (USDC)" },
+    { label: "Cash PnL", value: balancePnl, helper: "Data API cash PnL" },
+    { label: "Markets Watched", value: "18", helper: "Top liquidity markets" }
   ];
 
   return (
@@ -95,6 +133,8 @@ export default function Home() {
         </Grid>
 
         <ShadowMetrics />
+
+        <ActivityFeed />
 
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 7 }}>
