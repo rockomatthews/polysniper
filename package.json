@@ -1,0 +1,14 @@
+{
+  "name": "polysniper",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:trader": "npm run dev --workspace=apps/trader",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces"
+  }
+}
