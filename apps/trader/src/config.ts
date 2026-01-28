@@ -57,6 +57,7 @@ export const config = {
   tunerStep: asNumber(process.env.TUNER_STEP ?? "", 0.05),
   tunerMinMultiplier: asNumber(process.env.TUNER_MIN_MULTIPLIER ?? "", 1.1),
   tunerMaxMultiplier: asNumber(process.env.TUNER_MAX_MULTIPLIER ?? "", 2.5),
+  controlPollMs: asNumber(process.env.CONTROL_POLL_MS ?? "", 5000),
   maxNotionalPerMarket: asNumber(process.env.MAX_NOTIONAL_PER_MARKET ?? "", 250),
   maxTotalExposure: asNumber(process.env.MAX_TOTAL_EXPOSURE ?? "", 1000),
   dailyLossLimit: asNumber(process.env.DAILY_LOSS_LIMIT ?? "", 200),

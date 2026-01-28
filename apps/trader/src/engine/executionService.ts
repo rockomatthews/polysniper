@@ -1,5 +1,6 @@
 import { OrderManager } from "./orderManager";
 import { AutoTuner } from "./autoTuner";
+import { ControlService } from "./controlService";
 import { Telemetry } from "./telemetry";
 import { logger } from "../utils/logger";
 
@@ -26,11 +27,16 @@ export class ExecutionService {
     private config: ExecutionConfig,
     private orders: OrderManager,
     private telemetry?: Telemetry,
-    private autoTuner?: AutoTuner
+    private autoTuner?: AutoTuner,
+    private controlService?: ControlService
   ) {}
 
   setAutoTuner(autoTuner: AutoTuner | undefined) {
     this.autoTuner = autoTuner;
+  }
+
+  setControlService(controlService: ControlService | undefined) {
+    this.controlService = controlService;
   }
 
   isHalted() {
@@ -41,6 +47,23 @@ export class ExecutionService {
     if (this.halted) {
       return;
     }
+    const control = this.controlService?.getState();
+    if (control && !control.armed) {
+      this.telemetry?.logEvent({
+        event_type: "control_block",
+        payload: { reason: "not_armed" }
+      });
+      return;
+    }
+
+    if (control && !control.liveTrading && !this.config.paperTrading && !this.config.shadowMode) {
+      this.telemetry?.logEvent({
+        event_type: "control_block",
+        payload: { reason: "live_trading_disabled" }
+      });
+      return;
+    }
+
     if (this.config.paperTrading || this.config.shadowMode) {
       logger.info("Paper trade", input);
       this.telemetry?.logEvent({
@@ -94,6 +117,23 @@ export class ExecutionService {
     if (this.halted) {
       return;
     }
+    const control = this.controlService?.getState();
+    if (control && !control.armed) {
+      this.telemetry?.logEvent({
+        event_type: "control_block",
+        payload: { reason: "not_armed" }
+      });
+      return;
+    }
+
+    if (control && !control.liveTrading && !this.config.paperTrading && !this.config.shadowMode) {
+      this.telemetry?.logEvent({
+        event_type: "control_block",
+        payload: { reason: "live_trading_disabled" }
+      });
+      return;
+    }
+
     if (this.config.paperTrading || this.config.shadowMode) {
       logger.info("Paper trade (cross)", input);
       this.telemetry?.logEvent({

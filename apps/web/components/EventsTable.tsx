@@ -60,6 +60,7 @@ export const EventsTable = () => {
               <TableRow>
                 <TableCell>Type</TableCell>
                 <TableCell>Market</TableCell>
+                <TableCell>Payload</TableCell>
                 <TableCell>Created</TableCell>
               </TableRow>
             </TableHead>
@@ -68,6 +69,9 @@ export const EventsTable = () => {
                 <TableRow key={event.id}>
                   <TableCell>{event.event_type}</TableCell>
                   <TableCell>{event.market_id ?? "-"}</TableCell>
+                  <TableCell sx={{ maxWidth: 320, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {event.payload ? JSON.stringify(event.payload) : "-"}
+                  </TableCell>
                   <TableCell>
                     {new Date(event.created_at).toLocaleTimeString()}
                   </TableCell>

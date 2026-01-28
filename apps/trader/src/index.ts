@@ -14,6 +14,7 @@ import { OpportunityEngine } from "./engine/opportunityEngine";
 import { ExecutionService } from "./engine/executionService";
 import { PairDiscovery } from "./engine/pairDiscovery";
 import { AutoTuner } from "./engine/autoTuner";
+import { ControlService } from "./engine/controlService";
 
 const parseHeaders = (json: string) => {
   if (!json) {
@@ -101,6 +102,15 @@ const main = async () => {
   const telemetry = new Telemetry(config.supabaseUrl, config.supabaseServiceKey);
   telemetry.init();
 
+  const controlService = new ControlService(
+    config.supabaseUrl,
+    config.supabaseServiceKey,
+    telemetry,
+    config.controlPollMs
+  );
+  controlService.init();
+  await controlService.start();
+
   const clob = new ClobClient(config.clobApiBase, resolveAuthHeaders);
   const orderManager = new OrderManager(clob, telemetry);
   const riskEngine = new RiskEngine({
@@ -166,6 +176,7 @@ const main = async () => {
     : undefined;
 
   execution.setAutoTuner(autoTuner);
+  execution.setControlService(controlService);
   opportunityEngine.setAutoTuner(autoTuner);
 
   ws.onMessage((message) => {
