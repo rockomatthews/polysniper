@@ -26,21 +26,26 @@ export default function Home() {
 
   const loadControl = async () => {
     try {
+      console.info("Control load requested");
       const response = await fetch("/api/control");
+      console.info("Control load response", response.status);
       if (!response.ok) {
         throw new Error("Failed to load control state");
       }
       const data = await response.json();
+      console.info("Control load payload", data);
       setArmed(Boolean(data.armed));
       setLiveTrading(Boolean(data.live_trading));
       setControlError("");
     } catch (error) {
+      console.error("Control load failed", error);
       setControlError((error as Error).message);
     }
   };
 
   const updateControl = async (next: { armed?: boolean; live_trading?: boolean }) => {
     try {
+      console.info("Control update requested", next);
       const response = await fetch("/api/control", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,19 +54,23 @@ export default function Home() {
           live_trading: next.live_trading ?? liveTrading
         })
       });
+      console.info("Control update response", response.status);
       if (!response.ok) {
         throw new Error("Failed to update control state");
       }
       const data = await response.json();
+      console.info("Control update payload", data);
       setArmed(Boolean(data.armed));
       setLiveTrading(Boolean(data.live_trading));
       setControlError("");
     } catch (error) {
+      console.error("Control update failed", error);
       setControlError((error as Error).message);
     }
   };
 
   useEffect(() => {
+    console.info("Control polling start");
     loadControl();
     const interval = setInterval(loadControl, 5000);
     return () => clearInterval(interval);
